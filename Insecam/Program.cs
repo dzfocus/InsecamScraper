@@ -703,7 +703,7 @@ namespace Insecam
                                 Match m = r.Match(result1);
                                 if (m.Success)
 
-                                    Console.WriteLine("    " + ip + (m.Result("${port}")));
+                                    Console.WriteLine("http://" + ip + (m.Result("${port}")));
 
                             }
 
