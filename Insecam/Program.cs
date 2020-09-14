@@ -1,11 +1,13 @@
 ﻿using Edokan.KaiZen.Colors;
 using HtmlAgilityPack;
-
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -452,7 +454,7 @@ namespace Insecam
                     int count2 = Int32.Parse(Npages)*6;
                     
                     Console.WriteLine("Country:".Green() + " " + count.Yellow() + "   " + "Devices:".Green() + " " + count2.ToString().Yellow());
-                   
+                    Console.WriteLine("----------IP-----------------------State---------".Magenta());
                     spinner2.Stop();
 
                     ////scraping page Get ip:port
@@ -473,16 +475,24 @@ namespace Insecam
                             {
                                
                                 result1 = item.GetAttributeValue("src", null) + System.Environment.NewLine; ;
-
+                                
                                 string ip = (result1.Between("http://", ":"));
-                               
+
+                                //get state
+                                WebClient wc = new WebClient();
+                                var json = wc.DownloadString("http://api.db-ip.com/v2/free/" + ip);
+                                dynamic location = JObject.Parse(json);
+
+                                
                                 Regex r = new Regex(@"^(?<proto>\w+)://[^/]+?(?<port>:\d+)?/",
                                      RegexOptions.None, TimeSpan.FromMilliseconds(150));
                                 Match m = r.Match(result1);
                                 if (m.Success)
-                                  
-                                Console.WriteLine("http://" + ip + (m.Result("${port}")));
-                              
+
+                                    
+                                Console.WriteLine(String.Format("{0,-22}  | {1,-22} |", "http://" + ip, location.stateProv));
+
+                                                            
                             }
 
                             
